@@ -4,8 +4,17 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "server.js",
+    "dev": "nodemon server.js"
   },
   "author": "olawole jethro",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2",
+    "nanoid": "^4.0.2",
+    "nodemon": "^2.0.22"
+  }
 }
