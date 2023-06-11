@@ -1,9 +1,8 @@
-const express = require("express");
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
+import app from "./app.js";
 dotenv.config();
-const dbConnection = require("./config/db");
+import dbConnection from "./config/db.js";
 dbConnection();
-const app = express();
 
 app.get("/", (req, res) => {
   res.send("Hi world!");

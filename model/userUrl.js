@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const userUrlSchema = new mongoose.Schema({
   urlId: { type: String, required: true },
@@ -10,4 +10,4 @@ const userUrlSchema = new mongoose.Schema({
 
 const userUrl = mongoose.model("userUrl", userUrlSchema);
 
-module.exports = userUrl;
+export default userUrl;
