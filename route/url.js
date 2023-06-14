@@ -20,9 +20,9 @@ router.post("/short", async (req, res) => {
       let url = await userUrl.findOne({ origUrl });
       console.log("❤", url);
       if (url) {
-        return res.send(url);
+        res.send(url);
       } else {
-        const shortUrl = `${baseUrl}${urlId}`;
+        const shortUrl = `${baseUrl}/${urlId}`;
         let urls = userUrl.create({
           urlId,
           origUrl,
@@ -40,11 +40,5 @@ router.post("/short", async (req, res) => {
   } else {
     res.status(400).json("invalid url");
   }
-});
-router.get("/shortUrl", async (req, res) => {
-  try {
-    // const Id = req.
-    let urlId = await userUrl.findOne({});
-  } catch (err) {}
 });
 export default router;
