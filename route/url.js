@@ -1,6 +1,6 @@
 import express from "express";
 import { nanoid } from "nanoid";
-import userUrl from "./model/userUrl.js";
+import userUrl from "../model/userUrl.js";
 // import validateUrl from "./utils/utils.js";
 import dotenv from "dotenv";
 
@@ -17,30 +17,34 @@ router.post("/short", async (req, res) => {
   // console.log(origUrl);
   if (origUrl) {
     try {
-      let url = userUrl.find({ origUrl });
-      console.log(url);
+      let url = await userUrl.findOne({ origUrl });
+      console.log("❤", url);
       if (url) {
-        res.json.toString(url);
+        return res.send(url);
       } else {
         const shortUrl = `${baseUrl}${urlId}`;
-        let url = userUrl.create({
+        let urls = userUrl.create({
           urlId,
           origUrl,
           shortUrl,
-          clicks,
           date: Date.now,
         });
         // console.log(url);
-        (await url).save();
-        // await res.json.toString(url);
+        (await urls).save();
+        return res.send(urls);
       }
     } catch (err) {
       console.log(err);
-      res.status(500).json("server error");
+      res.status(500).send("server error");
     }
   } else {
     res.status(400).json("invalid url");
   }
 });
-
+router.get("/shortUrl", async (req, res) => {
+  try {
+    // const Id = req.
+    let urlId = await userUrl.findOne({});
+  } catch (err) {}
+});
 export default router;
