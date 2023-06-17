@@ -8,7 +8,10 @@ const router = express.Router();
 
 router.get("/:urlId", async (req, res) => {
   try {
+    // const { urlId, costumUrl } = req.params;
     let url = await userUrl.findOne({ urlId: req.params.urlId });
+    // let url = await userUrl.find({ urlId, costumUrl });
+    console.log(url);
     if (url) {
       await userUrl.updateOne(
         { urlId: req.params.urlId },
@@ -23,4 +26,5 @@ router.get("/:urlId", async (req, res) => {
     res.status(500).send("input a valid url");
   }
 });
+
 export default router;

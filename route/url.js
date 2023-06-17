@@ -20,7 +20,7 @@ router.post("/short", async (req, res) => {
       let url = await userUrl.findOne({ origUrl });
       console.log("❤", url);
       if (url) {
-        res.send(url);
+        return res.send("url already exist");
       } else {
         const shortUrl = `${baseUrl}/${urlId}`;
         let urls = userUrl.create({
