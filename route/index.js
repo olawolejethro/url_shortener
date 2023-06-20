@@ -17,6 +17,7 @@ router.get("/:urlId", async (req, res) => {
         { urlId: req.params.urlId },
         { $inc: { clicks: 1 } }
       );
+
       return res.status(302).redirect(url.origUrl);
     } else {
       res.status(404).send("shortUrl not found");
