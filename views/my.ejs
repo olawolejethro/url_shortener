@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>URL Shortener</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        margin: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        margin-top: 10px;
+      }
+
+      .card {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>URL Shortener</h1>
+
+      <form action="/short" method="POST">
+        <div class="form-group">
+          <label for="originalUrl">Enter the URL:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="originalUrl"
+            name="originalUrl"
+            placeholder="Enter URL"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Shorten</button>
+        <div class="form-group">
+          <label for="customUrl">Custom URL (optional):</label>
+          <input
+            type="text"
+            class="form-control"
+            id="customUrl"
+            name="customUrl"
+            placeholder="Custom URL"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Shorten</button>
+      </form>
+
+      <hr />
+    </div>
+  </body>
+</html>

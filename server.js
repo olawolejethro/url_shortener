@@ -1,12 +1,11 @@
+// import express from "express";
 import dotenv from "dotenv";
 import app from "./app.js";
-dotenv.config();
-import dbConnection from "./config/db.js";
-dbConnection();
+// import bodyParser from "body-parser";
 
-app.get("/", (req, res) => {
-  res.send("Hi world!");
-});
+import dbConnection from "./config/db.js";
+dotenv.config();
+dbConnection();
 
 app.listen(4000, "localhost", () => {
   console.log("server is running at port 4000");

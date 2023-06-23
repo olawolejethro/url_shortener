@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>URL Shortener</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        margin: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        margin-top: 10px;
+      }
+
+      .card {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Shortened URLs</h2>
+    <% if ( urls.length ) { %> <% urls.forEach(function(url) { %>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><%= url.shortUrl %></h5>
+        <p class="card-text">
+          Original URL:
+          <a href="<%= url.origUrl %>"><%= url.origUrl %></a>
+        </p>
+        <p class="card-text">Created at: <%= url.createdAt %></p>
+        <p class="card-text">QR Code: <img src="<%= url.qrCode %>" /></p>
+      </div>
+    </div>
+    <% }) %> <% } else { %>
+    <p>No URLs to display.</p>
+    <% } %>
+
+    <h2>My History</h2>
+    <% if (history && history.length > 0) { %> <%
+    history.forEach(function(record) { %>
+    <p><%= record %></p>
+    <% }) %> <% } else { %>
+    <p>No history to display.</p>
+    <% } %>
+  </body>
+</html>

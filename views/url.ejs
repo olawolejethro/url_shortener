@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>URL Shortener</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        margin: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        margin-top: 10px;
+      }
+
+      .card {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h2>Shortened URLs</h2>
+      <% if ( urlData.length ) { %> <% urlData.forEach(function(url) { %>
+      <div>
+        <a href=""></a>
+        <h5 class="card-title">
+          <a href="<%= url.shortUrl %>"><%= url.shortUrl %></a>
+        </h5>
+      </div>
+      <% }) %> <% } else { %>
+      <p>No URLs to display.</p>
+      <% } %>
+
+      <h2>My History</h2>
+      <% if (history && history.length > 0) { %> <%
+      history.forEach(function(record) { %>
+      <p><%= record %></p>
+      <% }) %> <% } else { %>
+      <p>No history to display.</p>
+      <% } %>
+
+      <form action="/qrCode" method="POST">
+        <div class="form-group">
+          <label for="qrCode">QR_CODE_GENERATOR:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="originalUrl"
+            name="shortUrl"
+            placeholder="Enter Shortened Url"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Scan</button>
+      </form>
+    </div>
+  </body>
+</html>
