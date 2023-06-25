@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Login</title>
+    <title>URL Shortener</title>
     <style>
       /* CSS styles */
       body {
@@ -34,8 +34,7 @@
         margin-bottom: 8px;
       }
 
-      input[type="text"],
-      input[type="password"] {
+      input[type="text"] {
         width: 100%;
         padding: 10px;
         border: 1px solid #ccc;
@@ -61,18 +60,16 @@
   </head>
   <body>
     <div class="container">
-      <h1>Login</h1>
+      <h1>URL Shortener</h1>
 
-      <form action="/login" method="POST">
-        <label for="usernameOrEmail">Username/Email:</label>
-        <input type="text" id="usernameOrEmail" name="email" required />
+      <form action="/costumeUrl" method="POST">
+        <label for="shortId">Short ID:</label>
+        <input type="text" id="shortId" name="urlId" required />
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
+        <label for="originalUrl">Original URL:</label>
+        <input type="text" id="originalUrl" name="origUrl" required />
 
-        <button type="submit" class="btn">
-          Login/<a href="/signUp">signup</a>
-        </button>
+        <button type="submit">Shorten URL</button>
       </form>
     </div>
   </body>

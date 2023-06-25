@@ -1,9 +1,9 @@
 import express from "express";
 import userRoute from "./route/url.js";
-// import qrCode from "./route/qrCode.js";
 import bodyParser from "body-parser";
+import authRoute from "./route/authRoute.js";
+
 import ejs from "ejs";
-// import userUrl from "./model/userUrl.js";
 
 const app = express();
 app.set("view engine", "ejs");
@@ -15,10 +15,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", (req, res, next) => {
+  res.render("login");
+});
+app.get("/signUp", (req, res, next) => {
+  res.render("signUp");
+});
+app.get("/short", (req, res, next) => {
   res.render("my");
+});
+app.get("/costumeUrl", (req, res, next) => {
+  res.render("customUrl");
 });
 
 app.use("/", userRoute);
+app.use("/", authRoute);
 // app.use("/", indexRoute);
 // app.use("/", customUrlRoute);
 // app.use("/", qrCode);

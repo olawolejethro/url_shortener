@@ -20,7 +20,7 @@ export async function redirectUrl(req, res) {
 
       return res.status(302).redirect(url.origUrl);
     } else {
-      res.status(404).send("shortUrl not found");
+      res.status(404).send("Url not found");
     }
   } catch (err) {
     console.log(err);
@@ -73,6 +73,7 @@ export async function costumUrl(req, res) {
   const baseUrl = process.env.BASE_URL;
   try {
     const { urlId, origUrl } = req.body;
+    console.log(urlId, origUrl);
     let url = await userUrl.findOne({ urlId });
     if (url) {
       return res.send("url already exist");
@@ -80,10 +81,9 @@ export async function costumUrl(req, res) {
       const costumUrl = `${baseUrl}/${urlId}`;
       const urls = await userUrl.create({ origUrl, costumUrl, urlId });
 
-      // console.log(generateQrCode(costumUrl));
-      //   console.log(urls);
       (await urls).save();
-      return res.status(201).send(urls);
+      const urlData = Object.entries(urls)[1];
+      return res.render("url", { urlData, history });
     }
   } catch (err) {
     console.log(err);
