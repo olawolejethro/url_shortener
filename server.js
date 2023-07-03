@@ -1,12 +1,13 @@
-// import express from "express";
 import dotenv from "dotenv";
 import app from "./app.js";
-// import bodyParser from "body-parser";
 
 import dbConnection from "./config/db.js";
+
 dotenv.config();
+const PORT = process.env.PORT || 4000;
+const HOST = process.env.HOST || "0.0.0.0";
 dbConnection();
 
-app.listen(4000, "localhost", () => {
+app.listen(PORT, HOST, () => {
   console.log("server is running at port 4000");
 });

@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import crypto from "crypto";
 import validator from "validator";
 import bcrypt from "bcrypt";
+
 const authSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -63,10 +65,60 @@ authSchema.pre("save", async function (next) {
   next();
 });
 
+// Pre document hook to update the passwordModifiedAt field after password change
+authSchema.pre("save", async function (next) {
+  if (!this.isModified("password") || this.isNew) return next(); // prevents update of passwordModifiedAt field for unmodified password or new document
+  this.passwordModifiedAt = Date.now() - 1500; // Setting it to 1.5s in the past because, although we awaited the saving the actual saving in to the db might happen just after the jwt is issued which will then render our token useless. So, setting it just a bit in the past helps us prevent this scenario
+  next();
+});
+
 // document method for checking correct password
 authSchema.methods.isCorrectPassword = async function (providedPassword) {
   return await bcrypt.compare(providedPassword, this.password);
 };
+
+// document method for checking if password has been modified after token was issued
+authSchema.methods.passwordModified = function (JWT_IAT) {
+  if (!this.passwordModifiedAt) return false;
+  const JWT_IAT_TS = new Date(JWT_IAT * 1000).toISOString(); // gets the ISO string timestamp of JWT IAT (milliseconds)
+  // console.log(new Date(this.passwordModifiedAt), "🎯🎯", new Date(JWT_IAT_TS));
+  return new Date(JWT_IAT_TS) < new Date(this.passwordModifiedAt);
+};
+
+// document method for generating reset Token
+authSchema.methods.genResetToken = function () {
+  const token = crypto.randomBytes(32).toString("hex");
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  this.passwordResetToken = hashedToken;
+  this.passwordResetTokenExpiryTime = Date.now() + 10 * 60 * 1000;
+  // console.log(token, hashedToken);
+  return token;
+};
+// // Pre-save hook to hash the password before saving the user
+// authSchema.pre("save", async function (next) {
+//   try {
+//     if (!this.isModified("password")) {
+//       return next();
+//     }
+
+//     const salt = await bcrypt.genSalt(10);
+//     this.password = await bcrypt.hash(this.password, salt);
+//     console.log(this.password);
+//     next();
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// // Add a method to compare passwords
+// authSchema.methods.comparePassword = async function (providedPassword) {
+//   try {
+//     console.log(providedPassword, this.password);
+//     return await bcrypt.compare(providedPassword, this.password);
+//   } catch (error) {
+//     throw new Error(error);
+//   }
+// };
 
 const auth = mongoose.model("userAuth", authSchema);
 

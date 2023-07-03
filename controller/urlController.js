@@ -1,16 +1,16 @@
 import { nanoid } from "nanoid";
 import userUrl from "../model/userUrl.js";
+import jwt from "jsonwebtoken";
+import util from "util";
 // import validateUrl from "./utils/utils.js";
 import qr from "qrcode";
-import fs from "fs";
 import dotenv from "dotenv";
+import auth from "../model/authModel.js";
 dotenv.config();
 
 export async function redirectUrl(req, res) {
   try {
-    // const { urlId, costumUrl } = req.params;
     let url = await userUrl.findOne({ urlId: req.params.urlId });
-    // let url = await userUrl.find({ urlId, costumUrl });
     console.log(url);
     if (url) {
       await userUrl.updateOne(
@@ -31,15 +31,29 @@ export async function redirectUrl(req, res) {
 let history = [];
 
 export async function shortenUrl(req, res) {
+  console.log("good");
   const origUrl = req.body.originalUrl;
   const baseUrl = process.env.BASE_URL;
   const urlId = nanoid(8);
-  // console.log(urlId);
-  console.log(origUrl);
+  const token = req.cookies.token;
+  // Verify token
+  const decoded = await util.promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET
+  );
+  console.log(decoded);
+  const user_id = decoded.user._id;
+  console.log(user_id);
+  const loggedInUser = await auth.findById(user_id);
+  console.log(loggedInUser);
+
+  if (!loggedInUser) {
+    // User is not logged in
+    return res.send("Please log in to shorten the URL");
+  }
   if (origUrl) {
     try {
       let url = await userUrl.findOne({ origUrl });
-      console.log("❤", typeof url);
       if (url) {
         return res.send("url already exist");
       } else {
@@ -51,7 +65,6 @@ export async function shortenUrl(req, res) {
           date: Date.now,
         });
 
-        console.log(Object.entries(urls)[1]);
         const urlData = Object.entries(urls)[1];
 
         (await urls).save();

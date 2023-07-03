@@ -40,16 +40,35 @@
       <% } %>
 
       <h2>My History</h2>
-      <% if (history && history.length > 0) { %> <%
-      history.forEach(function(record) { %>
-      <p><%= record %></p>
-      <% }) %> <% } else { %>
-      <p>No history to display.</p>
-      <% } %>
 
+      <table class="table table-stripped table-responsive">
+        <thead>
+          <tr>
+            <th>Full URl</th>
+            <th>Short URL</th>
+            <th>Clicks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% urlData.forEach(shortUrl => { %>
+          <tr>
+            <td>
+              <a href="<%= shortUrl.origUrl %>"><%= shortUrl.origUrl %></a>
+            </td>
+            <td>
+              <a href="<%= shortUrl.shortUrl %>"><%= shortUrl.shortUrl %></a>
+            </td>
+
+            <td><%= shortUrl.clicks %></td>
+          </tr>
+          <%}) %>
+        </tbody>
+      </table>
+
+      <br />
       <form action="/qrCode" method="POST">
         <div class="form-group">
-          <label for="qrCode">QR_CODE_GENERATOR:</label>
+          <label for="qrCode" class="qrCode">QR_CODE_GENERATOR:</label>
           <input
             type="text"
             class="form-control"

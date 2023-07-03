@@ -6,7 +6,6 @@ import genToken from "../utils/genToken.js";
 export async function signUpUser(req, res, next) {
   try {
     const { firstName, lastName, email, password, confirmPassword } = req.body;
-    console.log(firstName, lastName, email, password, confirmPassword);
     const user = await auth.create({
       firstName,
       lastName,
@@ -18,8 +17,11 @@ export async function signUpUser(req, res, next) {
     user.confirmPassword = undefined; // so the password won't show in the output and as payload in the token
     user.__v = undefined;
     const token = genToken(user);
-    res.redirect("/");
-    return res.status(301).json({
+    // console.log(user, token)
+
+    res.cookie("token", token, { httpOnly: true });
+    // return res.redirect("/");
+    return res.redirect("/").status(201).json({
       status: "success",
       token,
       data: {
@@ -34,24 +36,25 @@ export async function signUpUser(req, res, next) {
 export async function signInUser(req, res, next) {
   try {
     const { email, password } = req.body;
-    console.log(email, password, "hi");
+    // console.log(req.cookies);
     if (!email || !password)
       return next(new Error("Bad request! Email and Password is required."));
     const user = await auth.findOne({ email }).select("+password");
+    console.log(user);
     if (!user || !(await user.isCorrectPassword(password)))
       return next(new Error("Unauthenticated! Email or Password incorrect."));
     user.password = undefined;
     user.__v = undefined;
     const token = genToken(user);
-    return res.redirect("/short");
+    res.cookie("user", user, { httpOnly: true });
 
-    // .status(200).json({
-    //   status: "success",
-    //   token,
-    //   data: {
-    //     user,
-    //   },
-    // });
+    res.redirect("/short").status(200).json({
+      status: "success",
+      token,
+      data: {
+        user,
+      },
+    });
   } catch (error) {
     next(error);
   }
