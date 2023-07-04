@@ -61,16 +61,20 @@ export async function shortenUrl(req, res) {
         let urls = await userUrl.create({
           urlId,
           origUrl,
+          user_id,
           shortUrl,
           date: Date.now,
         });
-
+        console.log("hi", urls);
+        let urlHistory = await userUrl.find({});
+        console.log(urlHistory, "😘");
         const urlData = Object.entries(urls)[1];
-
+        const history = Object.entries(urlHistory)[2];
+        console.log(history);
         (await urls).save();
         // res.redirect("/short");
         // return res.render("url", { urls, history });
-        return res.render("url", { urlData, history });
+        return res.render("url", { urlData, urlHistory });
         // return res.status(201).send(urls);
       }
     } catch (err) {

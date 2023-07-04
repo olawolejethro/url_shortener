@@ -49,8 +49,9 @@
             <th>Clicks</th>
           </tr>
         </thead>
+
         <tbody>
-          <% urlData.forEach(shortUrl => { %>
+          <% urlHistory.forEach(shortUrl => { %>
           <tr>
             <td>
               <a href="<%= shortUrl.origUrl %>"><%= shortUrl.origUrl %></a>

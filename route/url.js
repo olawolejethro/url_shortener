@@ -12,8 +12,8 @@ const router = express.Router();
 // short url generator
 
 router.post("/short", shortenUrl);
-router.post("/costumeUrl", passport.authenticate("local"), costumUrl);
-router.get("/:urlId", passport.authenticate("local"), redirectUrl);
-router.post("/qrCode", passport.authenticate("local"), generateQrCode);
+router.post("/costumeUrl", costumUrl);
+router.get("/:urlId", redirectUrl);
+router.post("/qrCode", generateQrCode);
 
 export default router;
