@@ -1,30 +1,42 @@
 import express from "express";
 import userRoute from "./route/url.js";
-import bodyParser from "body-parser";
 import authRoute from "./route/authRoute.js";
 import passport from "passport";
-import dotenv from "dotenv";
-import cookieParser from "cookie-parser";
 import session from "express-session";
+import dotenv from "dotenv";
+import connectMongoDBSession from "connect-mongodb-session";
+import cookieParser from "cookie-parser";
 import passportjs from "./middlewares/passport.js";
 import ejs from "ejs";
-dotenv.config();
 
+dotenv.config();
+const app = express();
+const MongoDBStore = connectMongoDBSession(session);
 const SESSION_SECRET = process.env.SESSION_SECRET;
 const COOKIE_EXPIRATION_TIME = process.env.COOKIE_EXPIRATION_TIME;
+const MONGO_DB_URL = process.env.MONGO_DB_URL;
 
-const app = express();
 app.set("view engine", "ejs");
 
+const store = new MongoDBStore({
+  uri: MONGO_DB_URL,
+  collection: "sessions",
+});
+
+store.on("error", (error) => {
+  console.log(error);
+});
+
+// SESSION MIDDLEWARE
 const sessionMW = session({
   secret: SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
-  // store: store,
+  store: store,
   cookie: {
     secure: false,
     maxAge: +COOKIE_EXPIRATION_TIME,
-    domain: "http://localhost:4000,",
+    domain: "http://127.0.0.1:4000,",
   }, // Set secure to true if using HTTPS
 });
 
@@ -51,7 +63,4 @@ app.get("/costumeUrl", (req, res, next) => {
 
 app.use("/", userRoute);
 app.use("/", authRoute);
-// app.use("/", indexRoute);
-// app.use("/", customUrlRoute);
-// app.use("/", qrCode);
 export default app;
