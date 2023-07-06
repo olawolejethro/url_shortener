@@ -1,17 +1,20 @@
 import express from "express";
-import userRoute from "./route/url.js";
-import authRoute from "./route/authRoute.js";
+import cookieParser from "cookie-parser";
 import passport from "passport";
 import session from "express-session";
 import dotenv from "dotenv";
 import connectMongoDBSession from "connect-mongodb-session";
-import cookieParser from "cookie-parser";
-import passportjs from "./middlewares/passport.js";
 import ejs from "ejs";
+import rateLimit from "express-rate-limit";
+
+import authRoute from "./route/authRoute.js";
+import userRoute from "./route/url.js";
+import passportjs from "./middlewares/passport.js";
 
 dotenv.config();
 const app = express();
 const MongoDBStore = connectMongoDBSession(session);
+
 const SESSION_SECRET = process.env.SESSION_SECRET;
 const COOKIE_EXPIRATION_TIME = process.env.COOKIE_EXPIRATION_TIME;
 const MONGO_DB_URL = process.env.MONGO_DB_URL;
@@ -47,6 +50,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 passportjs;
+
+const appLimiter = rateLimit({
+  max: 100, // max allowable number of request from an IP address in a given timeframe
+  windowMs: 60 * 60 * 1000, // 1 hour
+  message: "Too many requests from your IP address, please try again later.",
+});
+app.use("/", appLimiter); // Use to limit repeated requests to the server
 
 app.get("/", (req, res, next) => {
   res.render("login");
