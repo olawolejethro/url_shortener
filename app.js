@@ -22,7 +22,7 @@ const store = new MongoDBStore({
   uri: MONGO_DB_URL,
   collection: "sessions",
 });
-
+//catch store error
 store.on("error", (error) => {
   console.log(error);
 });

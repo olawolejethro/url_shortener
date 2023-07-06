@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+// import crypto from "crypto";
 import crypto from "crypto";
 import validator from "validator";
 import bcrypt from "bcrypt";
@@ -94,31 +95,6 @@ authSchema.methods.genResetToken = function () {
   // console.log(token, hashedToken);
   return token;
 };
-// // Pre-save hook to hash the password before saving the user
-// authSchema.pre("save", async function (next) {
-//   try {
-//     if (!this.isModified("password")) {
-//       return next();
-//     }
-
-//     const salt = await bcrypt.genSalt(10);
-//     this.password = await bcrypt.hash(this.password, salt);
-//     console.log(this.password);
-//     next();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
-// // Add a method to compare passwords
-// authSchema.methods.comparePassword = async function (providedPassword) {
-//   try {
-//     console.log(providedPassword, this.password);
-//     return await bcrypt.compare(providedPassword, this.password);
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// };
 
 const auth = mongoose.model("userAuth", authSchema);
 
