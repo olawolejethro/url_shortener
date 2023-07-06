@@ -1,8 +1,7 @@
-import mongoose from "mongoose";
-// import crypto from "crypto";
-import crypto from "crypto";
-import validator from "validator";
-import bcrypt from "bcrypt";
+const mongoose = require("mongoose");
+const crypto = require("crypto");
+const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 const authSchema = new mongoose.Schema({
   firstName: {
@@ -82,7 +81,6 @@ authSchema.methods.isCorrectPassword = async function (providedPassword) {
 authSchema.methods.passwordModified = function (JWT_IAT) {
   if (!this.passwordModifiedAt) return false;
   const JWT_IAT_TS = new Date(JWT_IAT * 1000).toISOString(); // gets the ISO string timestamp of JWT IAT (milliseconds)
-  // console.log(new Date(this.passwordModifiedAt), "🎯🎯", new Date(JWT_IAT_TS));
   return new Date(JWT_IAT_TS) < new Date(this.passwordModifiedAt);
 };
 
@@ -92,10 +90,9 @@ authSchema.methods.genResetToken = function () {
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
   this.passwordResetToken = hashedToken;
   this.passwordResetTokenExpiryTime = Date.now() + 10 * 60 * 1000;
-  // console.log(token, hashedToken);
   return token;
 };
 
 const auth = mongoose.model("userAuth", authSchema);
 
-export default auth;
+module.exports = auth;

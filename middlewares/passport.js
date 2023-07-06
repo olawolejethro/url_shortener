@@ -1,6 +1,6 @@
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
-import auth from "../model/authModel.js";
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const auth = require("../model/authModel.js");
 
 passport.use(
   "local",
@@ -46,46 +46,4 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-export default passport;
-
-// import passport from "passport";
-// import passportJwt from "passport-jwt";
-// // import ExtractJWT from  ("passport-jwt").ExtractJwt;
-// import auth from "../model/authModel.js";
-
-// const JWTStrategy = passportJwt.Strategy;
-// const ExtractJWT = passportJwt.ExtractJwt;
-
-// export default passport.use(
-//   "jwt",
-//   new JWTStrategy(
-//     {
-//       jwtFromRequest: ExtractJWT.fromBodyField(),
-//       secretOrKey: process.env.JWT_SECRET,
-//     },
-//     async (payload, done) => {
-//       try {
-//         // Check if the user associated with token still exists
-//         const claimUser = await auth.findById(payload.user._id);
-//         if (!claimUser)
-//           return done(
-//             new Error("User associated with token no longer exists.")
-//           );
-//         // Check if the password has been changed after token was issued
-//         const passwordModified = claimUser.passwordModified(payload.iat);
-//         if (passwordModified)
-//           return done(
-//             new Error(
-//               "Invalid token! User changed password after this token was issued. Signin again to get a new token."
-//             )
-//           );
-//         // Grant access!
-//         done(null, payload.user);
-//       } catch (error) {
-//         done(error);
-//       }
-//     }
-//   )
-// );
-
-// // export default passport;
+module.exports = passport;

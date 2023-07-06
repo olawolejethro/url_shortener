@@ -1,4 +1,4 @@
-import axios from "axios";
+const axios = require("axios");
 async function validateUrl(url) {
   try {
     const response = await axios.get(url);
@@ -21,4 +21,4 @@ async function validateUrl(url) {
   }
 }
 
-export default validateUrl;
+module.exports = validateUrl;

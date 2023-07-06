@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+const jwt = require("jsonwebtoken");
 
 function genToken(user) {
   const payload = { user };
@@ -9,4 +9,4 @@ function genToken(user) {
   return token;
 }
 
-export default genToken;
+module.exports = genToken;

@@ -1,14 +1,14 @@
-import { nanoid } from "nanoid";
-import userUrl from "../model/userUrl.js";
-import jwt from "jsonwebtoken";
-import util from "util";
-import validateHttpUrl from "../utils/utils.js";
-import qr from "qrcode";
-import dotenv from "dotenv";
-import auth from "../model/authModel.js";
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const userUrl = require("../model/userUrl.js");
+const util = require("util");
+const validateHttpUrl = require("../utils/utils.js");
+const qr = require("qrcode");
+const dotenv = require("dotenv");
+const auth = require("../model/authModel.js");
 dotenv.config();
 
-export async function redirectUrl(req, res) {
+exports.redirectUrl = async (req, res, next) => {
   try {
     let url = await userUrl.findOne({ urlId: req.params.urlId });
     console.log(url);
@@ -26,14 +26,12 @@ export async function redirectUrl(req, res) {
     console.log(err);
     res.status(500).send("input a valid url");
   }
-}
+};
 
 let history = [];
 
-export async function shortenUrl(req, res) {
+exports.shortenUrl = async (req, res, next) => {
   const origUrl = req.body.originalUrl;
-  // const baseUrl = process.env.BASE_URL;
-  const urlId = nanoid(8);
   const token = req.cookies.token;
   // Verify token
   const decoded = await util.promisify(jwt.verify)(
@@ -51,6 +49,16 @@ export async function shortenUrl(req, res) {
     return res.send("Please log in to shorten the URL");
   }
   if (validateHttpUrl(origUrl)) {
+    let hash;
+
+    const hashInput =
+      decoded.user && decoded.user.email
+        ? decoded.user.email + origUrl
+        : origUrl;
+    hash = crypto.createHash("md5").update(hashInput).digest("hex");
+    const urlId = hash.slice(0, 7);
+
+    console.log("mine", hash, urlId);
     try {
       let url = await userUrl.findOne({ origUrl });
       if (url) {
@@ -66,7 +74,7 @@ export async function shortenUrl(req, res) {
         });
         // console.log("hi", urls);
         let urlHistory = await userUrl.find({ user_id });
-        console.log(urlHistory, "😘");
+        // console.log(urlHistory, "😘");
         const urlData = Object.entries(urls)[1];
 
         (await urls).save();
@@ -80,9 +88,9 @@ export async function shortenUrl(req, res) {
   } else {
     res.status(400).json("invalid url");
   }
-}
+};
 
-export async function costumUrl(req, res) {
+exports.costumUrl = async (req, res, next) => {
   // const baseUrl = process.env.BASE_URL;
   const { urlId, origUrl } = req.body;
 
@@ -106,7 +114,7 @@ export async function costumUrl(req, res) {
       if (url) {
         return res.send("url already exist");
       } else {
-        const customUrl = `${req.protocol}://${req.get("host")}/s/${urlId}`;
+        const costumUrl = `${req.protocol}://${req.get("host")}/s/${urlId}`;
 
         const urls = await userUrl.create({
           origUrl,
@@ -127,12 +135,12 @@ export async function costumUrl(req, res) {
   } else {
     res.status(400).json("invalid url");
   }
-}
+};
 
-export async function generateQrCode(req, res) {
+exports.generateQrCode = async (req, res, next) => {
   const shortUrl = req.body.shortUrl;
   console.log(shortUrl);
   const qrCodeData = await qr.toDataURL(shortUrl, (err, src) => {
     res.render("image", { qrCode: src });
   });
-}
+};

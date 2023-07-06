@@ -1,15 +1,15 @@
-import express from "express";
-import cookieParser from "cookie-parser";
-import passport from "passport";
-import session from "express-session";
-import dotenv from "dotenv";
-import connectMongoDBSession from "connect-mongodb-session";
-import ejs from "ejs";
-import rateLimit from "express-rate-limit";
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const passport = require("passport");
+const session = require("express-session");
+const dotenv = require("dotenv");
+const connectMongoDBSession = require("connect-mongodb-session");
+const ejs = require("ejs");
+const rateLimit = require("express-rate-limit");
 
-import authRoute from "./route/authRoute.js";
-import userRoute from "./route/url.js";
-import passportjs from "./middlewares/passport.js";
+const authRoute = require("./route/authRoute");
+const userRoute = require("./route/url");
+const passportjs = require("./middlewares/passport.js");
 
 dotenv.config();
 const app = express();
@@ -73,4 +73,4 @@ app.get("/costumeUrl", (req, res, next) => {
 
 app.use("/", userRoute);
 app.use("/", authRoute);
-export default app;
+module.exports = app;

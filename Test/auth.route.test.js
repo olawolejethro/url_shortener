@@ -1,11 +1,14 @@
-import mongoose from "mongoose";
-import supertest from "supertest";
-import dotenv from "dotenv";
+const supertest = require("supertest");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+// const { jest } = require("@jest/globals");
+
 dotenv.config(); // loads enviroment variables into process.env
 
-import app from "../app";
+const app = require("../app");
+// jest.useFakeTimers();
 
-import User from "../model/authModel.js";
+const User = require("../model/authModel.js");
 // for testing purposes, we use the test DB (stub)
 const TEST_DATABASE_URL = process.env.TEST_DATABASE_URL;
 
@@ -29,7 +32,7 @@ afterAll(async () => {
 });
 
 describe("Test Auth", () => {
-  test("POST /api/v1/auth/signup", async () => {
+  test("POST /signup", async () => {
     const newUser = {
       firstName: "olawole",
       lastName: "jethro",
@@ -51,13 +54,13 @@ describe("Test Auth", () => {
     expect(response.body.data.user.email).toBe("olawolejethro249@gmail.com");
   });
 
-  test("POST /api/v1/auth/login", async () => {
+  test("POST /login", async () => {
     const loginDetails = {
-      email: "wisdomomobolaji@gmail.com",
+      email: "olawolejethro249@gmail.com",
       password: "qwerty",
     };
     const response = await supertest(app)
-      .post(`/api/v1/auth/signin`)
+      .post(`/login`)
       .set("Content-Type", "application/x-www-form-urlencoded")
       .send(loginDetails);
     expect(response.headers["content-type"]).toBe(
@@ -67,6 +70,6 @@ describe("Test Auth", () => {
     expect(response.body.status).toBe("success");
     expect(response.body).toHaveProperty("token");
     expect(response.body.data).toHaveProperty("user");
-    expect(response.body.data.user.email).toBe("wisdomomobolaji@gmail.com");
+    expect(response.body.data.user.email).toBe("olawolejethro249@gmail.com");
   });
 });

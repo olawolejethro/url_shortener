@@ -1,9 +1,9 @@
-import auth from "../model/authModel.js";
-import dotenv from "dotenv";
+const auth = require("../model/authModel.js");
+const dotenv = require("dotenv");
 dotenv.config();
-import genToken from "../utils/genToken.js";
+const genToken = require("../utils/genToken.js");
 
-export async function signUpUser(req, res, next) {
+exports.signUpUser = async (req, res, next) => {
   try {
     const { firstName, lastName, email, password, confirmPassword } = req.body;
     const user = await auth.create({
@@ -17,7 +17,7 @@ export async function signUpUser(req, res, next) {
     user.confirmPassword = undefined; // so the password won't show in the output and as payload in the token
     user.__v = undefined;
     const token = genToken(user);
-    // console.log(user, token)
+    console.log(user, token);
 
     res.cookie("token", token, { httpOnly: true });
     // return res.redirect("/");
@@ -31,9 +31,9 @@ export async function signUpUser(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-export async function signInUser(req, res, next) {
+exports.signInUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     // console.log(req.cookies);
@@ -58,4 +58,4 @@ export async function signInUser(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
