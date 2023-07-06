@@ -32,7 +32,7 @@ let history = [];
 
 export async function shortenUrl(req, res) {
   const origUrl = req.body.originalUrl;
-  const baseUrl = process.env.BASE_URL;
+  // const baseUrl = process.env.BASE_URL;
   const urlId = nanoid(8);
   const token = req.cookies.token;
   // Verify token
@@ -56,7 +56,7 @@ export async function shortenUrl(req, res) {
       if (url) {
         return res.send("url already exist");
       } else {
-        const shortUrl = `${baseUrl}/${urlId}`;
+        const shortUrl = `${req.protocol}://${req.get("host")}/s/${urlId}`;
         let urls = await userUrl.create({
           urlId,
           origUrl,
@@ -83,7 +83,7 @@ export async function shortenUrl(req, res) {
 }
 
 export async function costumUrl(req, res) {
-  const baseUrl = process.env.BASE_URL;
+  // const baseUrl = process.env.BASE_URL;
   const { urlId, origUrl } = req.body;
 
   const token = req.cookies.token;
@@ -106,7 +106,8 @@ export async function costumUrl(req, res) {
       if (url) {
         return res.send("url already exist");
       } else {
-        const costumUrl = `${baseUrl}/${urlId}`;
+        const customUrl = `${req.protocol}://${req.get("host")}/s/${urlId}`;
+
         const urls = await userUrl.create({
           origUrl,
           costumUrl,
