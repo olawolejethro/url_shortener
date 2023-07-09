@@ -47,22 +47,15 @@ Built as a capstone project at [Altschool Africa School of Engineering - Node.js
       ├── app.js
       ├── config
       │   └── db.js
-      # │   └── redis.ts
       ├── routes
       │   ├── authRoutes.js
       │   ├── url.js
-      # │   └── viewRoutes.ts
       ├── controllers
       │   ├── authController.js
-      # │   ├── historyController.ts
       │   └── urlController.js
-      # │   └── errorControllers.ts
       ├── models
       │   ├── userUrl.js
       │   └── authModel.js
-      # ├── interfaces
-      # │   ├── UserDocument.ts
-      # │   └── UserObject.ts
       ├── middlewares
       │   └── passport.js
       ├── tests
@@ -85,7 +78,7 @@ To be able to get this application up and running, ensure to have [node](https:/
 1. **Download the project locally by forking this repo and then clone or just clone directly via:**
 
 ```bash
-git clone https://github.com/omobolajisonde/url-scissors.git
+git clone https://github.com/olawolejethro/url_shortener.git
 ```
 
 2. **Set up the Database**
@@ -160,7 +153,7 @@ npm test
 
 ### Getting Started
 
-- Base URL: https://shtnr.onrender.com/
+- Base URL: https://j-cut.onrender.com/
 
 - Authentication: Protected routes, requires a valid JWT to be sent along with the request as a Cookie header.
   Valid tokens can be gotten on `signup`, `signin` and `resetPassword`.
@@ -332,7 +325,7 @@ Success
 
 ---
 
-`GET /s/:urlAlias`
+`GET /s/:urlId`
 
 Redirects to original URL
 
@@ -340,7 +333,7 @@ Redirects to original URL
 
 ## `/url`
 
-`POST '/url/shortenURL'`
+`POST '/url/short'`
 
 Sends a `POST` request to shorten provided URL.
 
@@ -353,7 +346,7 @@ Sends a `POST` request to shorten provided URL.
 ```json
 {
     "longUrl": "https://www.youtube.com/"
-    "customUrl": "short"
+    "customUrl": "/short"
 }
 ```
 
@@ -409,7 +402,7 @@ Success
 
 ## Deployment
 
-https://shtnr.onrender.com/
+https://j-cut.onrender.com/
 
 ## Authors
 
