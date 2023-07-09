@@ -13,21 +13,26 @@ exports.signUpUser = async (req, res, next) => {
       password,
       confirmPassword,
     });
-    user.password = undefined; // so the password won't show in the output and as payload in the token
-    user.confirmPassword = undefined; // so the password won't show in the output and as payload in the token
+    user.password = undefined;
+    user.confirmPassword = undefined;
     user.__v = undefined;
     const token = genToken(user);
-    console.log(user, token);
 
-    res.cookie("token", token, { httpOnly: true });
-    // return res.redirect("/");
-    return res.redirect("/").status(201).json({
-      status: "success",
-      token,
-      data: {
-        user,
-      },
-    });
+    const redirectTo = req.query.redirect || "/"; // Get the redirect URL from the query parameters
+
+    if (req.headers.accept && req.headers.accept.includes("application/json")) {
+      // If the request accepts JSON response, send JSON response
+      return res.status(201).json({
+        status: "success",
+        token,
+        data: {
+          user,
+        },
+      });
+    } else {
+      // If the request does not accept JSON response, set the token cookie and redirect
+      res.cookie("token", token, { httpOnly: true }).redirect(redirectTo);
+    }
   } catch (error) {
     next(error);
   }
@@ -36,25 +41,36 @@ exports.signUpUser = async (req, res, next) => {
 exports.signInUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    // console.log(req.cookies);
+
     if (!email || !password)
-      return next(new Error("Bad request! Email and Password is required."));
+      return next(new Error("Bad request! Email and Password are required."));
+
     const user = await auth.findOne({ email }).select("+password");
-    console.log(user);
+
     if (!user || !(await user.isCorrectPassword(password)))
-      return next(new Error("Unauthenticated! Email or Password incorrect."));
+      return next(
+        new Error("Unauthenticated! Email or Password is incorrect.")
+      );
+
     user.password = undefined;
     user.__v = undefined;
     const token = genToken(user);
-    res.cookie("user", user, { httpOnly: true });
 
-    res.redirect("/short").status(200).json({
-      status: "success",
-      token,
-      data: {
-        user,
-      },
-    });
+    const redirectTo = req.query.redirect || "/short"; // Get the redirect URL from the query parameters
+
+    if (req.headers.accept && req.headers.accept.includes("application/json")) {
+      // If the request accepts JSON response, send JSON response
+      return res.status(200).json({
+        status: "success",
+        token,
+        data: {
+          user,
+        },
+      });
+    } else {
+      // If the request does not accept JSON response, set the user cookie and redirect
+      res.cookie("user", user, { httpOnly: true }).redirect(redirectTo);
+    }
   } catch (error) {
     next(error);
   }

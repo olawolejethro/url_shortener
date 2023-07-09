@@ -31,64 +31,141 @@ exports.redirectUrl = async (req, res, next) => {
 let history = [];
 
 exports.shortenUrl = async (req, res, next) => {
-  const origUrl = req.body.originalUrl;
-  const token = req.cookies.token;
-  // Verify token
-  const decoded = await util.promisify(jwt.verify)(
-    token,
-    process.env.JWT_SECRET
-  );
-  // console.log(decoded);
-  const user_id = decoded.user._id;
-  console.log(user_id);
-  const loggedInUser = await auth.findById(user_id);
-  console.log(loggedInUser);
+  try {
+    const origUrl = req.body.originalUrl;
+    const token = req.cookies.token;
 
-  if (!loggedInUser) {
-    // User is not logged in
-    return res.send("Please log in to shorten the URL");
-  }
-  if (validateHttpUrl(origUrl)) {
-    let hash;
+    // Verify token
+    const decoded = await util.promisify(jwt.verify)(
+      token,
+      process.env.JWT_SECRET
+    );
 
-    const hashInput =
-      decoded.user && decoded.user.email
-        ? decoded.user.email + origUrl
-        : origUrl;
-    hash = crypto.createHash("md5").update(hashInput).digest("hex");
-    const urlId = hash.slice(0, 7);
+    // Extract user ID from the decoded token
+    const user_id = decoded.user._id;
+    console.log(user_id);
 
-    console.log("mine", hash, urlId);
-    try {
+    // Find the logged-in user based on the user ID
+    const loggedInUser = await auth.findById(user_id);
+    console.log(loggedInUser);
+
+    if (!loggedInUser) {
+      // User is not logged in
+      return res.send("Please log in to shorten the URL");
+    }
+
+    if (validateHttpUrl(origUrl)) {
+      let hash;
+
+      // Construct the input for generating the URL hash
+      const hashInput =
+        decoded.user && decoded.user.email
+          ? decoded.user.email + origUrl
+          : origUrl;
+
+      // Generate the URL hash
+      hash = crypto.createHash("md5").update(hashInput).digest("hex");
+      const urlId = hash.slice(0, 7);
+
+      console.log("Generated URL hash:", hash, urlId);
+
+      // Check if the URL already exists in the userUrl collection
       let url = await userUrl.findOne({ origUrl });
       if (url) {
-        return res.send("url already exist");
+        return res.send("URL already exists");
       } else {
         const shortUrl = `${req.protocol}://${req.get("host")}/s/${urlId}`;
+
+        // Create a new URL entry in the userUrl collection
         let urls = await userUrl.create({
           urlId,
           origUrl,
           user_id,
           shortUrl,
-          date: Date.now,
+          date: Date.now(),
         });
-        // console.log("hi", urls);
+
+        // Retrieve the URL data and history for rendering the template
         let urlHistory = await userUrl.find({ user_id });
-        // console.log(urlHistory, "😘");
         const urlData = Object.entries(urls)[1];
 
+        // Save the newly created URL entry
         (await urls).save();
+
+        // Render the 'url' template with the URL data and history
         return res.render("url", { urlData, urlHistory });
-        // return res.status(201).send(urls);
       }
-    } catch (err) {
-      console.log(err);
-      res.status(500).send("server error");
+    } else {
+      // Invalid URL
+      res.status(400).send("Invalid URL");
     }
-  } else {
-    res.status(400).json("invalid url");
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Server error");
   }
 };
+
+// exports.shortenUrl = async (req, res, next) => {
+//   try {
+//     const origUrl = req.body.originalUrl;
+//     const token = req.cookies.token || "test-token"; // Provide a test token for testing purposes
+
+//     // Verify token
+//     const decoded = await util.promisify(jwt.verify)(
+//       token,
+//       process.env.JWT_SECRET
+//     );
+
+//     const user_id = decoded.user ? decoded.user._id : "test-user-id"; // Provide a test user id for testing purposes
+
+//     const loggedInUser =
+//       user_id !== "test-user-id" ? await auth.findById(user_id) : null;
+
+//     if (!loggedInUser) {
+//       // User is not logged in
+//       return res.status(401).send("Please log in to shorten the URL");
+//     }
+
+//     if (validateHttpUrl(origUrl)) {
+//       const hashInput = loggedInUser.email
+//         ? loggedInUser.email + origUrl
+//         : origUrl;
+//       const hash = crypto.createHash("md5").update(hashInput).digest("hex");
+//       const urlId = hash.slice(0, 7);
+
+//       const existingUrl = await userUrl.findOne({ origUrl });
+
+//       if (existingUrl) {
+//         return res.status(409).send("URL already exists");
+//       }
+
+//       const shortUrl = `${req.protocol}://${req.get("host")}/s/${urlId}`;
+
+//       const urlData = {
+//         urlId,
+//         origUrl,
+//         user_id,
+//         shortUrl,
+//         date: Date.now(),
+//       };
+
+//       const urls = await userUrl.create(urlData);
+//       const urlHistory = await userUrl.find({ user_id });
+
+//       return res.status(201).json({
+//         status: "success",
+//         data: {
+//           urlData,
+//           urlHistory,
+//         },
+//       });
+//     } else {
+//       return res.status(400).send("Invalid URL");
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 exports.costumUrl = async (req, res, next) => {
   // const baseUrl = process.env.BASE_URL;

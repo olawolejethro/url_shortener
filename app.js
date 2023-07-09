@@ -9,8 +9,8 @@ const rateLimit = require("express-rate-limit");
 
 const authRoute = require("./route/authRoute");
 const userRoute = require("./route/url");
-const passportjs = require("./middlewares/passport.js");
 
+const passportjs = require("./middlewares/passport.js");
 dotenv.config();
 const app = express();
 const MongoDBStore = connectMongoDBSession(session);
@@ -58,11 +58,14 @@ const appLimiter = rateLimit({
 });
 app.use("/", appLimiter); // Use to limit repeated requests to the server
 
+app.get("/welcome", (req, res) => {
+  res.send("welcome");
+});
 app.get("/", (req, res, next) => {
   res.render("login");
 });
-app.get("/signUp", (req, res, next) => {
-  res.render("signUp");
+app.get("/signup", (req, res, next) => {
+  res.render("sign");
 });
 app.get("/short", (req, res, next) => {
   res.render("my");
@@ -73,4 +76,16 @@ app.get("/costumeUrl", (req, res, next) => {
 
 app.use("/", userRoute);
 app.use("/", authRoute);
+
+// Global error handling middleware
+
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "An Internal server error has occured!";
+  return res.status(statusCode).json({
+    status: "failed",
+    message: message,
+  });
+});
+
 module.exports = app;

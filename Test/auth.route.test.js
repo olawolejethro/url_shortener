@@ -23,7 +23,7 @@ beforeAll((done) => {
     console.log(err, "An error occurred while connecting to MongoDB");
     done();
   });
-});
+}, 100000);
 
 //  Runs after all the tests
 afterAll(async () => {
@@ -32,6 +32,10 @@ afterAll(async () => {
 });
 
 describe("Test Auth", () => {
+  test("GET/welcome", async () => {
+    const resp = await supertest(app).get(`/welcome`);
+    expect(resp.text).toBe("welcome");
+  });
   test("POST /signup", async () => {
     const newUser = {
       firstName: "olawole",
@@ -44,15 +48,11 @@ describe("Test Auth", () => {
       .post(`/signup`)
       .set("Content-Type", "application/x-www-form-urlencoded")
       .send(newUser);
-    expect(response.headers["content-type"]).toBe(
-      "application/json; charset=utf-8"
-    );
-    expect(response.statusCode).toBe(201);
-    expect(response.body.status).toBe("success");
-    expect(response.body).toHaveProperty("token");
-    expect(response.body.data).toHaveProperty("user");
-    expect(response.body.data.user.email).toBe("olawolejethro249@gmail.com");
-  });
+    expect(response.headers["content-type"]).toBe("text/plain; charset=utf-8");
+    expect(response.statusCode).toBe(302);
+    expect(response.redirect).toBeTruthy();
+    expect(response.header.location).toBe("/");
+  }, 100000);
 
   test("POST /login", async () => {
     const loginDetails = {
@@ -63,13 +63,10 @@ describe("Test Auth", () => {
       .post(`/login`)
       .set("Content-Type", "application/x-www-form-urlencoded")
       .send(loginDetails);
-    expect(response.headers["content-type"]).toBe(
-      "application/json; charset=utf-8"
-    );
-    expect(response.statusCode).toBe(200);
-    expect(response.body.status).toBe("success");
-    expect(response.body).toHaveProperty("token");
-    expect(response.body.data).toHaveProperty("user");
-    expect(response.body.data.user.email).toBe("olawolejethro249@gmail.com");
-  });
+
+    expect(response.headers["content-type"]).toBe("text/plain; charset=utf-8");
+    expect(response.statusCode).toBe(302);
+    expect(response.redirect).toBeTruthy();
+    expect(response.header.location).toBe("/short");
+  }, 100000);
 });
