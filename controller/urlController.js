@@ -191,7 +191,7 @@ exports.costumUrl = async (req, res, next) => {
       if (url) {
         return res.send("url already exist");
       } else {
-        const costumUrl = `${req.protocol}://${req.get("host")}/s/${urlId}`;
+        const costumUrl = `${req.protocol}://${req.get("host")}/${urlId}`;
 
         const urls = await userUrl.create({
           origUrl,
