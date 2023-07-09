@@ -74,7 +74,7 @@ exports.shortenUrl = async (req, res, next) => {
       if (url) {
         return res.send("URL already exists");
       } else {
-        const shortUrl = `${req.protocol}://${req.get("host")}/s/${urlId}`;
+        const shortUrl = `${req.protocol}://${req.get("host")}/${urlId}`;
 
         // Create a new URL entry in the userUrl collection
         let urls = await userUrl.create({
