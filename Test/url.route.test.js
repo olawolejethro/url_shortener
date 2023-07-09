@@ -34,7 +34,7 @@ afterAll(async () => {
 describe("Shorten URL", () => {
   it("should shorten the URL and return the rendered template", async () => {
     // Assuming you have a valid user token stored in the 'token' variable
-    const token = TEST_JWT;
+    const token = TEST_JWT || "valid-user-token";
     const originalUrl = "https://example.com";
 
     const response = await supertest(app)
@@ -54,7 +54,7 @@ describe("Shorten URL", () => {
     const response = await supertest(app).post("/short").send({ originalUrl });
 
     // Verify the response
-    // expect(response.status).toBe(200);
+    expect(response.status).toBe(200);
     expect(response.text).toContain("Please log in to shorten the URL");
     // Additional assertions can be added based on your specific requirements
   });
