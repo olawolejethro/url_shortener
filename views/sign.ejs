@@ -14,7 +14,8 @@
       }
 
       .container {
-        width: 400px;
+        max-width: 400px;
+        width: 90%;
         padding: 20px;
         background-color: #fff;
         border-radius: 5px;
@@ -58,6 +59,25 @@
       button:hover {
         background-color: #45a049;
       }
+
+      /* Responsive styles */
+      @media screen and (max-width: 767px) {
+        /* Adjust styles for screens smaller than 767px */
+        .container {
+          width: 100%;
+          padding: 10px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+          margin-bottom: 10px;
+        }
+
+        button {
+          padding: 8px 16px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -85,7 +105,7 @@
           required
         />
 
-        <a href="/"> <button type="submit">Sign Up</button></a>
+        <button type="submit">Sign Up</button>
       </form>
     </div>
   </body>

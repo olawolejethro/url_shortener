@@ -15,7 +15,8 @@
       }
 
       .container {
-        width: 400px;
+        max-width: 400px;
+        width: 90%;
         padding: 20px;
         background-color: #fff;
         border-radius: 5px;
@@ -57,6 +58,19 @@
 
       button:hover {
         background-color: #45a049;
+      }
+
+      /* Responsive styles */
+      @media screen and (max-width: 480px) {
+        /* Adjust styles for screens smaller than 480px */
+        .container {
+          width: 100%;
+          padding: 10px;
+        }
+
+        h2.container {
+          font-size: 20px;
+        }
       }
     </style>
   </head>
